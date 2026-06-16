@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BareBoneBiology — AP Bio Practice</title>
+<style>
+:root {
+  --green: #1a7a4a;
+  --green-mid: #2ecc82;
+  --green-light: #d4f5e5;
+  --green-dark: #0e4f2f;
+  --teal: #0F6E56;
+  --teal-light: #E1F5EE;
+  --teal-mid: #5DCAA5;
+  --blue: #1a4a8a;
+  --blue-light: #e0eaff;
+  --coral: #c0392b;
+  --coral-light: #fde8e6;
+  --amber: #d4820a;
+  --amber-light: #fff3dc;
+  --bg: #ffffff;
+  --bg2: #f4fbf7;
+  --bg3: #eaf5f0;
+  --text: #0f1f18;
+  --text2: #3d6352;
+  --text3: #7aaa90;
+  --border: rgba(26,122,74,0.15);
+  --border2: rgba(26,122,74,0.3);
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg3);color:var(--text);min-height:100vh;line-height:1.6}
+
+/* Animated DNA background */
+.dna-bg{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.045}
+.dna-bg svg{width:100%;height:100%}
+
+.shell{max-width:700px;margin:0 auto;padding:1.5rem 1rem 4rem;position:relative;z-index:1}
+
+/* NAV */
+.nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.75rem;padding:10px 16px;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius-lg)}
+.nav-brand{display:flex;align-items:center;gap:10px;cursor:pointer;text-decoration:none}
+.nav-logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--green),var(--teal));display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nav-logo svg{width:20px;height:20px;fill:#fff}
+.nav-title{font-size:16px;font-weight:700;color:var(--green-dark);letter-spacing:-0.3px}
+.nav-sub{font-size:11px;color:var(--text3);margin-top:-1px}
+.nav-badge{font-size:11px;padding:3px 10px;border-radius:20px;background:var(--green-light);color:var(--green-dark);border:0.5px solid var(--teal-mid);font-weight:600}
+
+/* Screens */
+.screen{display:none}.screen.active{display:block}
+
+/* HERO */
+.hero{position:relative;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius-lg);padding:2rem 2rem 1.75rem;margin-bottom:1.25rem;overflow:hidden;text-align:center}
+.hero-graphic{position:absolute;right:-20px;top:-20px;opacity:0.07;width:200px;height:200px}
+.hero h1{font-size:28px;font-weight:800;letter-spacing:-0.8px;color:var(--green-dark);margin-bottom:6px}
+.hero h1 span{color:var(--green)}
+.hero p{font-size:14px;color:var(--text2);max-width:360px;margin:0 auto 1.5rem}
+.hero-stats{display:flex;justify-content:center;gap:2rem;margin-top:1rem;padding-top:1rem;border-top:0.5px solid var(--border)}
+.hero-stat .n{font-size:22px;font-weight:700;color:var(--green)}
+.hero-stat .l{font-size:12px;color:var(--text3)}
+
+/* Cell illustration strip */
+.bio-strip{display:flex;gap:10px;margin-bottom:1.25rem;overflow-x:auto;padding-bottom:4px}
+.bio-cell{flex-shrink:0;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius-lg);padding:12px 14px;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--green-dark)}
+.bio-cell svg{width:22px;height:22px;flex-shrink:0}
+
+/* Unit selector */
+.unit-section{margin-bottom:1.25rem}
+.unit-label{font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px}
+.unit-select-wrap{display:flex;align-items:center;gap:10px;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius);padding:10px 14px}
+.unit-select-wrap label{font-size:13px;color:var(--text2);white-space:nowrap;font-weight:600}
+select{flex:1;font-size:14px;font-family:inherit;color:var(--text);background:transparent;border:none;outline:none;cursor:pointer}
+
+/* Subunit groups */
+.subunit-groups{display:flex;flex-direction:column;gap:6px;margin-bottom:1.25rem;max-height:260px;overflow-y:auto;padding-right:2px}
+.unit-group{}
+.unit-group-header{font-size:12px;font-weight:700;color:var(--green-dark);background:var(--green-light);border-radius:var(--radius);padding:6px 12px;margin-bottom:4px;border:0.5px solid var(--border2)}
+.subunit-pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.subunit-pill{font-size:12px;padding:4px 12px;border-radius:20px;background:var(--bg);border:0.5px solid var(--border2);color:var(--text2);cursor:pointer;transition:all 0.1s;font-family:inherit}
+.subunit-pill:hover{background:var(--green-light);border-color:var(--teal-mid);color:var(--green-dark)}
+.subunit-pill.active{background:var(--green);border-color:var(--green-dark);color:#fff}
+
+/* Mode cards */
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mode-card{background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius-lg);padding:1.25rem;cursor:pointer;text-align:left;transition:all 0.15s;position:relative;overflow:hidden}
+.mode-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--radius-lg) var(--radius-lg) 0 0}
+.mode-card.mcq-card::before{background:linear-gradient(90deg,var(--green),var(--teal-mid))}
+.mode-card.frq-card::before{background:linear-gradient(90deg,var(--blue),var(--teal-mid))}
+.mode-card:hover{border-color:var(--teal-mid);box-shadow:0 4px 16px rgba(26,122,74,0.12);transform:translateY(-1px)}
+.mode-card .mc-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.mode-card.mcq-card .mc-icon{background:var(--green-light)}
+.mode-card.frq-card .mc-icon{background:var(--blue-light)}
+.mode-card .mc-icon svg{width:20px;height:20px}
+.mode-card.mcq-card .mc-icon svg{fill:var(--green)}
+.mode-card.frq-card .mc-icon svg{fill:var(--blue)}
+.mode-card h2{font-size:15px;font-weight:700;margin-bottom:4px;color:var(--text)}
+.mode-card p{font-size:13px;color:var(--text2);line-height:1.5}
+
+/* Question screen */
+.q-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.q-counter{font-size:13px;color:var(--text2);font-weight:600}
+.progress-bar{height:5px;background:var(--bg3);border-radius:3px;margin-bottom:1.5rem;overflow:hidden;border:0.5px solid var(--border)}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--teal-mid));border-radius:3px;transition:width 0.35s}
+.unit-chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--green-light);color:var(--green-dark);margin-bottom:1rem;border:0.5px solid var(--teal-mid);letter-spacing:0.2px}
+.q-card{background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1.25rem;position:relative}
+.q-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--green),var(--teal-mid));border-radius:3px 0 0 3px}
+.q-text{font-size:15px;line-height:1.7;color:var(--text);padding-left:8px}
+
+.options{display:flex;flex-direction:column;gap:8px}
+.opt{background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius);padding:.875rem 1rem;cursor:pointer;font-size:14px;font-family:inherit;color:var(--text);text-align:left;line-height:1.5;transition:all 0.1s;display:flex;gap:10px;align-items:flex-start}
+.opt:hover{background:var(--bg2);border-color:var(--teal-mid)}
+.opt-letter{font-size:11px;font-weight:700;color:var(--green-dark);background:var(--green-light);border-radius:5px;padding:2px 7px;flex-shrink:0;margin-top:2px;border:0.5px solid var(--border2)}
+.opt.selected-correct{border-color:var(--teal-mid);background:var(--teal-light)}
+.opt.selected-correct .opt-letter{background:var(--teal);color:#fff;border-color:var(--teal)}
+.opt.selected-wrong{border-color:#e57373;background:var(--coral-light)}
+.opt.selected-wrong .opt-letter{background:var(--coral);color:#fff;border-color:var(--coral)}
+.opt.reveal-correct{border-color:var(--teal-mid);background:var(--teal-light)}
+
+.feedback-box{margin-top:1rem;padding:1rem 1.25rem;border-radius:var(--radius);font-size:14px;line-height:1.6;display:none;border-left:3px solid}
+.feedback-box.show{display:block}
+.feedback-box.correct{background:var(--teal-light);color:#085041;border-color:var(--teal-mid)}
+.feedback-box.wrong{background:var(--coral-light);color:#6b1a14;border-color:#e57373}
+.feedback-box.info{background:var(--green-light);color:var(--green-dark);border-color:var(--teal-mid)}
+
+/* Buttons */
+.btn-row{display:flex;gap:8px;margin-top:1.25rem;flex-wrap:wrap}
+.btn{font-family:inherit;font-size:14px;padding:9px 20px;border-radius:var(--radius);cursor:pointer;border:0.5px solid var(--border2);background:var(--bg);color:var(--text);transition:all 0.1s;font-weight:500}
+.btn:hover{background:var(--bg2);border-color:var(--teal-mid)}
+.btn:disabled{opacity:0.5;cursor:not-allowed}
+.btn.primary{background:var(--green);color:#fff;border-color:var(--green-dark)}
+.btn.primary:hover{background:var(--green-dark)}
+
+/* FRQ */
+.frq-scenario{background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius-lg);padding:1.25rem;font-size:14px;line-height:1.7;color:var(--text2);margin-bottom:1.25rem;border-left:3px solid var(--green)}
+.frq-parts{display:flex;flex-direction:column;gap:1.25rem}
+.frq-part-label{font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px;display:flex;justify-content:space-between;align-items:baseline}
+.pts{font-size:12px;font-weight:500;color:var(--text3);background:var(--green-light);padding:2px 8px;border-radius:20px}
+textarea{width:100%;min-height:90px;font-family:inherit;font-size:14px;line-height:1.6;color:var(--text);background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius);padding:10px 12px;resize:vertical;outline:none;transition:border-color 0.15s}
+textarea:focus{border-color:var(--teal-mid);box-shadow:0 0 0 3px rgba(93,202,165,0.15)}
+.frq-result-card{background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius);padding:1rem 1.25rem;margin-top:8px;border-left:3px solid var(--teal-mid)}
+.frq-result-card h4{font-size:14px;font-weight:700;margin-bottom:6px;display:flex;justify-content:space-between}
+.frq-pts-num{color:var(--green);font-size:16px}
+.frq-result-card p{font-size:13px;color:var(--text2);line-height:1.6}
+
+/* Results */
+.results-hero{background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin-bottom:1.25rem;position:relative;overflow:hidden}
+.results-hero::after{content:'🧬';position:absolute;right:1rem;top:50%;transform:translateY(-50%);font-size:60px;opacity:0.1}
+.score-pct{font-size:60px;font-weight:800;letter-spacing:-3px;color:var(--green)}
+.score-msg{font-size:15px;color:var(--text2);margin-top:4px}
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem}
+.stat-box{background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius);padding:1rem;text-align:center}
+.stat-num{font-size:30px;font-weight:800;color:var(--green)}
+.stat-lbl{font-size:12px;color:var(--text3);margin-top:2px}
+.review-section h3{font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px}
+.review-list{display:flex;flex-direction:column;gap:8px}
+.review-item{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);padding:.875rem 1rem;font-size:13px;line-height:1.5}
+.review-item.ri-correct{border-left:3px solid var(--teal-mid)}
+.review-item.ri-wrong{border-left:3px solid #e57373}
+.ri-q{color:var(--text);margin-bottom:4px;font-weight:600}
+.ri-ans{color:var(--text2)}
+.ri-correct-ans{color:var(--teal);font-weight:600}
+
+/* Footer */
+.footer{text-align:center;margin-top:2.5rem;padding-top:1.5rem;border-top:0.5px solid var(--border);font-size:12px;color:var(--text3)}
+.footer strong{color:var(--green-dark)}
+
+@media(max-width:480px){.mode-grid{grid-template-columns:1fr}.stats-row{grid-template-columns:1fr 1fr}.score-pct{font-size:44px}.bio-strip{gap:6px}}
+</style>
+</head>
+<body>
+
+<!-- DNA background -->
+<div class="dna-bg">
+<svg viewBox="0 0 1400 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <g stroke="#1a7a4a" stroke-width="1.5" fill="none">
+    <!-- Left DNA helix -->
+    <path d="M80,0 Q120,45 80,90 Q40,135 80,180 Q120,225 80,270 Q40,315 80,360 Q120,405 80,450 Q40,495 80,540 Q120,585 80,630 Q40,675 80,720 Q120,765 80,810 Q40,855 80,900"/>
+    <path d="M120,0 Q80,45 120,90 Q160,135 120,180 Q80,225 120,270 Q160,315 120,360 Q80,405 120,450 Q160,495 120,540 Q80,585 120,630 Q160,675 120,720 Q80,765 120,810 Q160,855 120,900"/>
+    <line x1="80" y1="22" x2="120" y2="22"/><line x1="80" y1="67" x2="120" y2="67"/>
+    <line x1="80" y1="112" x2="120" y2="112"/><line x1="80" y1="157" x2="120" y2="157"/>
+    <line x1="80" y1="202" x2="120" y2="202"/><line x1="80" y1="247" x2="120" y2="247"/>
+    <line x1="80" y1="292" x2="120" y2="292"/><line x1="80" y1="337" x2="120" y2="337"/>
+    <line x1="80" y1="382" x2="120" y2="382"/><line x1="80" y1="427" x2="120" y2="427"/>
+    <line x1="80" y1="472" x2="120" y2="472"/><line x1="80" y1="517" x2="120" y2="517"/>
+    <line x1="80" y1="562" x2="120" y2="562"/><line x1="80" y1="607" x2="120" y2="607"/>
+    <line x1="80" y1="652" x2="120" y2="652"/><line x1="80" y1="697" x2="120" y2="697"/>
+    <line x1="80" y1="742" x2="120" y2="742"/><line x1="80" y1="787" x2="120" y2="787"/>
+    <line x1="80" y1="832" x2="120" y2="832"/><line x1="80" y1="877" x2="120" y2="877"/>
+    <!-- Right DNA helix -->
+    <path d="M1280,0 Q1320,45 1280,90 Q1240,135 1280,180 Q1320,225 1280,270 Q1240,315 1280,360 Q1320,405 1280,450 Q1240,495 1280,540 Q1320,585 1280,630 Q1240,675 1280,720 Q1320,765 1280,810 Q1240,855 1280,900"/>
+    <path d="M1320,0 Q1280,45 1320,90 Q1360,135 1320,180 Q1280,225 1320,270 Q1360,315 1320,360 Q1280,405 1320,450 Q1360,495 1320,540 Q1280,585 1320,630 Q1360,675 1320,720 Q1280,765 1320,810 Q1360,855 1320,900"/>
+    <line x1="1280" y1="22" x2="1320" y2="22"/><line x1="1280" y1="67" x2="1320" y2="67"/>
+    <line x1="1280" y1="112" x2="1320" y2="112"/><line x1="1280" y1="157" x2="1320" y2="157"/>
+    <line x1="1280" y1="202" x2="1320" y2="202"/><line x1="1280" y1="247" x2="1320" y2="247"/>
+    <line x1="1280" y1="292" x2="1320" y2="292"/><line x1="1280" y1="337" x2="1320" y2="337"/>
+    <line x1="1280" y1="382" x2="1320" y2="382"/><line x1="1280" y1="427" x2="1320" y2="427"/>
+    <line x1="1280" y1="472" x2="1320" y2="472"/><line x1="1280" y1="517" x2="1320" y2="517"/>
+    <line x1="1280" y1="562" x2="1320" y2="562"/><line x1="1280" y1="607" x2="1320" y2="607"/>
+    <line x1="1280" y1="652" x2="1320" y2="652"/><line x1="1280" y1="697" x2="1320" y2="697"/>
+  </g>
+  <!-- Cell circles -->
+  <circle cx="700" cy="100" r="60" stroke="#1a7a4a" stroke-width="1" fill="none"/>
+  <circle cx="700" cy="100" r="25" stroke="#1a7a4a" stroke-width="1" fill="none"/>
+  <circle cx="700" cy="800" r="50" stroke="#1a7a4a" stroke-width="1" fill="none"/>
+  <circle cx="700" cy="800" r="20" stroke="#1a7a4a" stroke-width="1" fill="none"/>
+  <!-- Molecules scattered -->
+  <circle cx="300" cy="400" r="8" stroke="#1a7a4a" stroke-width="1" fill="none"/>
+  <circle cx="1100" cy="300" r="8" stroke="#1a7a4a" stroke-width="1" fill="none"/>
+  <line x1="300" y1="390" x2="300" y2="370"/><line x1="290" y1="395" x2="275" y2="380"/><line x1="310" y1="395" x2="325" y2="380"/>
+  <line x1="1100" y1="290" x2="1100" y2="270"/><line x1="1090" y1="295" x2="1075" y2="280"/><line x1="1110" y1="295" x2="1125" y2="280"/>
+</svg>
+</div>
+
+<div class="shell">
+  <nav class="nav">
+    <div class="nav-brand" onclick="goHome()">
+      <div class="nav-logo">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26C17.81 13.47 19 11.38 19 9c0-3.87-3.13-7-7-7zm-1 14v-1h2v1h-2zm3-2.1V15h-4v-1.1C8.17 12.91 7 11.06 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 2.06-1.17 3.91-3 4.9z"/></svg>
+      </div>
+      <div>
+        <div class="nav-title">BareBoneBiology</div>
+        <div class="nav-sub">AP Bio Practice Tool</div>
+      </div>
+    </div>
+    <span class="nav-badge">2025–26 Curriculum</span>
+  </nav>
+
+  <!-- HOME -->
+  <div id="home" class="screen active">
+    <div class="hero">
+      <svg class="hero-graphic" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="100" r="90" stroke="#1a7a4a" stroke-width="2"/>
+        <circle cx="100" cy="100" r="40" stroke="#1a7a4a" stroke-width="2"/>
+        <ellipse cx="100" cy="100" rx="90" ry="40" stroke="#1a7a4a" stroke-width="1.5"/>
+        <ellipse cx="100" cy="100" rx="40" ry="90" stroke="#1a7a4a" stroke-width="1.5"/>
+      </svg>
+      <h1>Master <span>AP Biology.</span></h1>
+      <p>MCQs + AI-graded FRQs covering every unit and subunit of the 2025–26 curriculum.</p>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="n">8</div><div class="l">Units</div></div>
+        <div class="hero-stat"><div class="n">40+</div><div class="l">Subunits</div></div>
+        <div class="hero-stat"><div class="n">AI</div><div class="l">FRQ Grader</div></div>
+      </div>
+    </div>
+
+    <!-- Bio icon strip -->
+    <div class="bio-strip">
+      <div class="bio-cell">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#1a7a4a" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26C17.81 13.47 19 11.38 19 9c0-3.87-3.13-7-7-7z"/></svg>
+        Cell Biology
+      </div>
+      <div class="bio-cell">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#1a7a4a" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+        Genetics
+      </div>
+      <div class="bio-cell">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#1a7a4a" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        Energetics
+      </div>
+      <div class="bio-cell">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#1a7a4a" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg"><path d="M3 3v18h18"/><path d="M18 9l-5 5-4-4-3 3"/></svg>
+        Evolution
+      </div>
+      <div class="bio-cell">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#1a7a4a" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Ecology
+      </div>
+    </div>
+
+    <!-- Subunit selector -->
+    <div class="unit-section">
+      <div class="unit-label">Select a topic</div>
+      <div class="subunit-groups" id="subunitGroups"></div>
+    </div>
+
+    <div class="mode-grid">
+      <div class="mode-card mcq-card" onclick="startMCQ()">
+        <div class="mc-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+        </div>
+        <h2>MCQ Practice</h2>
+        <p>10 multiple-choice questions, auto-graded with AP-style explanations.</p>
+      </div>
+      <div class="mode-card frq-card" onclick="startFRQ()">
+        <div class="mc-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+        </div>
+        <h2>FRQ Practice</h2>
+        <p>A free-response question graded live by AI against the AP rubric.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MCQ SCREEN -->
+  <div id="mcq-screen" class="screen">
+    <div class="q-header">
+      <span class="q-counter" id="mcq-counter">Question 1 of 10</span>
+      <button class="btn" onclick="goHome()" style="font-size:13px;padding:5px 12px;">← Home</button>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="mcq-progress" style="width:10%"></div></div>
+    <div class="unit-chip" id="mcq-chip"></div>
+    <div class="q-card"><p class="q-text" id="mcq-q"></p></div>
+    <div class="options" id="mcq-opts"></div>
+    <div class="feedback-box" id="mcq-feedback"></div>
+    <div class="btn-row">
+      <button class="btn primary" id="mcq-next" onclick="nextMCQ()" style="display:none">Next →</button>
+    </div>
+  </div>
+
+  <!-- FRQ SCREEN -->
+  <div id="frq-screen" class="screen">
+    <div class="q-header">
+      <span class="unit-chip" id="frq-chip" style="margin:0"></span>
+      <button class="btn" onclick="goHome()" style="font-size:13px;padding:5px 12px;">← Home</button>
+    </div>
+    <div class="frq-scenario" id="frq-scenario"></div>
+    <div class="frq-parts" id="frq-parts"></div>
+    <div class="feedback-box info" id="frq-feedback"></div>
+    <div class="btn-row">
+      <button class="btn primary" id="frq-submit" onclick="submitFRQ()">✦ Grade with AI</button>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results-screen" class="screen">
+    <div class="results-hero">
+      <div class="score-pct" id="res-pct"></div>
+      <div class="score-msg" id="res-msg"></div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-num" id="res-correct"></div><div class="stat-lbl">Correct</div></div>
+      <div class="stat-box"><div class="stat-num" id="res-wrong"></div><div class="stat-lbl">Incorrect</div></div>
+    </div>
+    <div class="review-section">
+      <h3>Review</h3>
+      <div class="review-list" id="review-list"></div>
+    </div>
+    <div class="btn-row" style="margin-top:1.5rem">
+      <button class="btn" onclick="goHome()">← Home</button>
+      <button class="btn primary" onclick="startMCQ()">Try again</button>
+    </div>
+  </div>
+
+  <div class="footer">Made by <strong>BareBoneBiology</strong> · AP Biology 2025–26</div>
+</div>
+
+<script>
+// ── SUBUNIT MAP ──────────────────────────────────────────────────────────────
+const UNIT_TREE = [
+  {id:"1",name:"Unit 1 — Chemistry of Life",subs:[
+    {id:"1.1",name:"1.1 Structure of Water & Hydrogen Bonding"},
+    {id:"1.2",name:"1.2 Elements of Life"},
+    {id:"1.3",name:"1.3 Introduction to Biological Macromolecules"},
+    {id:"1.4",name:"1.4 Properties of Biological Macromolecules"},
+    {id:"1.5",name:"1.5 Structure & Function of Biological Macromolecules"},
+    {id:"1.6",name:"1.6 Nucleic Acids"},
+  ]},
+  {id:"2",name:"Unit 2 — Cell Structure & Function",subs:[
+    {id:"2.1",name:"2.1 Cell Structure: Subcellular Components"},
+    {id:"2.2",name:"2.2 Cell Structure & Function"},
+    {id:"2.3",name:"2.3 Cell Size"},
+    {id:"2.4",name:"2.4 Plasma Membranes"},
+    {id:"2.5",name:"2.5 Membrane Permeability"},
+    {id:"2.6",name:"2.6 Membrane Transport"},
+    {id:"2.7",name:"2.7 Facilitated Diffusion"},
+    {id:"2.8",name:"2.8 Tonicity & Osmoregulation"},
+    {id:"2.9",name:"2.9 Mechanisms of Transport"},
+    {id:"2.10",name:"2.10 Cell Compartmentalization"},
+  ]},
+  {id:"3",name:"Unit 3 — Cellular Energetics",subs:[
+    {id:"3.1",name:"3.1 Enzyme Structure"},
+    {id:"3.2",name:"3.2 Enzyme Catalysis"},
+    {id:"3.3",name:"3.3 Environmental Impacts on Enzyme Function"},
+    {id:"3.4",name:"3.4 Cellular Energy"},
+    {id:"3.5",name:"3.5 Photosynthesis"},
+    {id:"3.6",name:"3.6 Cellular Respiration"},
+    {id:"3.7",name:"3.7 Fitness"},
+  ]},
+  {id:"4",name:"Unit 4 — Cell Communication & Cell Cycle",subs:[
+    {id:"4.1",name:"4.1 Cell Communication"},
+    {id:"4.2",name:"4.2 Introduction to Signal Transduction"},
+    {id:"4.3",name:"4.3 Signal Transduction"},
+    {id:"4.4",name:"4.4 Changes in Signal Transduction Pathways"},
+    {id:"4.5",name:"4.5 Introduction to Cell Division"},
+    {id:"4.6",name:"4.6 Mitosis"},
+    {id:"4.7",name:"4.7 Regulation of Cell Cycle"},
+  ]},
+  {id:"5",name:"Unit 5 — Heredity",subs:[
+    {id:"5.1",name:"5.1 Meiosis"},
+    {id:"5.2",name:"5.2 Meiosis & Genetic Diversity"},
+    {id:"5.3",name:"5.3 Mendelian Genetics"},
+    {id:"5.4",name:"5.4 Non-Mendelian Genetics"},
+    {id:"5.5",name:"5.5 Multiple Alleles, Incomplete & Codominance"},
+    {id:"5.6",name:"5.6 Epistasis"},
+    {id:"5.7",name:"5.7 Linked Genes & Recombination"},
+    {id:"5.8",name:"5.8 Sex Linkage"},
+    {id:"5.9",name:"5.9 Environment & Phenotype"},
+    {id:"5.10",name:"5.10 Chromosomal Inheritance"},
+  ]},
+  {id:"6",name:"Unit 6 — Gene Expression & Regulation",subs:[
+    {id:"6.1",name:"6.1 DNA & RNA Structure"},
+    {id:"6.2",name:"6.2 Replication"},
+    {id:"6.3",name:"6.3 Transcription & RNA Processing"},
+    {id:"6.4",name:"6.4 Translation"},
+    {id:"6.5",name:"6.5 Mutations"},
+    {id:"6.6",name:"6.6 Gene Expression — Prokaryotes"},
+    {id:"6.7",name:"6.7 Gene Expression — Eukaryotes"},
+    {id:"6.8",name:"6.8 Biotechnology"},
+  ]},
+  {id:"7",name:"Unit 7 — Natural Selection",subs:[
+    {id:"7.1",name:"7.1 Introduction to Natural Selection"},
+    {id:"7.2",name:"7.2 Natural Selection"},
+    {id:"7.3",name:"7.3 Artificial Selection"},
+    {id:"7.4",name:"7.4 Population Genetics"},
+    {id:"7.5",name:"7.5 Hardy-Weinberg Equilibrium"},
+    {id:"7.6",name:"7.6 Evidence of Evolution"},
+    {id:"7.7",name:"7.7 Common Ancestry"},
+    {id:"7.8",name:"7.8 Phylogeny"},
+    {id:"7.9",name:"7.9 Speciation"},
+    {id:"7.10",name:"7.10 Extinction"},
+    {id:"7.11",name:"7.11 Variations in Populations"},
+    {id:"7.12",name:"7.12 Origin of Life"},
+  ]},
+  {id:"8",name:"Unit 8 — Ecology",subs:[
+    {id:"8.1",name:"8.1 Responses to the Environment"},
+    {id:"8.2",name:"8.2 Energy Flow & Biogeochemical Cycles"},
+    {id:"8.3",name:"8.3 Population Ecology"},
+    {id:"8.4",name:"8.4 Effect of Density on Populations"},
+    {id:"8.5",name:"8.5 Community Ecology"},
+    {id:"8.6",name:"8.6 Biodiversity"},
+    {id:"8.7",name:"8.7 Disruptions to Ecosystems"},
+  ]},
+];
+
+// ── QUESTIONS ────────────────────────────────────────────────────────────────
+const QUESTIONS = [
+  {sub:"1.1",unit:"1",unitName:"Chemistry of Life",q:"Which property of water allows it to act as a universal solvent for polar molecules?",opts:["Hydrophobicity","Polarity and hydrogen bonding","High specific heat","Cohesion"],ans:1,exp:"Water is polar; its partial charges form hydrogen bonds with other polar solutes, pulling them into solution."},
+  {sub:"1.3",unit:"1",unitName:"Chemistry of Life",q:"Which bond forms between amino acids during protein synthesis?",opts:["Peptide bond (carboxyl–amino)","Glycosidic bond","Phosphodiester bond","Disulfide bridge"],ans:0,exp:"Peptide bonds form via dehydration synthesis between the –COOH of one amino acid and the –NH₂ of the next."},
+  {sub:"2.1",unit:"2",unitName:"Cell Structure & Function",q:"Which organelle modifies, sorts, and packages proteins for secretion?",opts:["Smooth ER","Mitochondria","Golgi apparatus","Lysosome"],ans:2,exp:"The Golgi receives proteins from the ER, modifies them (glycosylation), and packages them into vesicles for secretion."},
+  {sub:"2.8",unit:"2",unitName:"Cell Structure & Function",q:"A cell placed in a hypotonic solution will most likely:",opts:["Shrink due to osmosis","Swell and potentially lyse","Remain unchanged","Undergo apoptosis"],ans:1,exp:"In a hypotonic solution, water moves into the cell by osmosis, causing it to swell."},
+  {sub:"3.5",unit:"3",unitName:"Cellular Energetics",q:"Where does the Calvin cycle occur in a plant cell?",opts:["Thylakoid membrane","Stroma of the chloroplast","Cytoplasm","Intermembrane space"],ans:1,exp:"The Calvin cycle runs in the stroma, fixing CO₂ using ATP and NADPH from the light reactions."},
+  {sub:"3.6",unit:"3",unitName:"Cellular Energetics",q:"The majority of ATP during cellular respiration is produced during:",opts:["Glycolysis","Pyruvate oxidation","The Krebs cycle","Oxidative phosphorylation"],ans:3,exp:"Oxidative phosphorylation (ETC + ATP synthase) produces ~32–34 of the ~36–38 ATP per glucose."},
+  {sub:"4.2",unit:"4",unitName:"Cell Communication",q:"Which signal molecule can directly diffuse through the plasma membrane?",opts:["Epinephrine","Insulin","Testosterone","Glucagon"],ans:2,exp:"Testosterone is a steroid hormone — lipid-soluble — so it diffuses through the bilayer and binds intracellular receptors."},
+  {sub:"5.3",unit:"5",unitName:"Heredity",q:"Two heterozygous parents (Aa × Aa) cross. What fraction of offspring will be homozygous?",opts:["1/4","1/2","3/4","All of them"],ans:1,exp:"Aa × Aa gives AA (1/4) + Aa (2/4) + aa (1/4). Homozygous = 1/4 + 1/4 = 1/2."},
+  {sub:"5.6",unit:"5",unitName:"Heredity",q:"Epistasis is best described as:",opts:["A gene on the X chromosome","When one gene masks expression of another","Incomplete dominance","A fitness-increasing mutation"],ans:1,exp:"Epistasis occurs when alleles at one locus mask expression of alleles at a separate, independent locus."},
+  {sub:"6.3",unit:"6",unitName:"Gene Expression",q:"Which enzyme synthesizes mRNA from a DNA template?",opts:["DNA polymerase","RNA primase","RNA polymerase","Helicase"],ans:2,exp:"RNA polymerase binds the promoter, unwinds DNA, and synthesizes the mRNA strand in the 5'→3' direction."},
+  {sub:"6.6",unit:"6",unitName:"Gene Expression",q:"In the lac operon, transcription is blocked when a repressor binds to the:",opts:["Promoter","Operator","Ribosome binding site","Stop codon"],ans:1,exp:"The repressor binds the operator between the promoter and structural genes, blocking RNA polymerase."},
+  {sub:"7.5",unit:"7",unitName:"Natural Selection",q:"Which condition is NOT required for Hardy-Weinberg equilibrium?",opts:["Random mating","Large population","Natural selection","No gene flow"],ans:2,exp:"HWE requires no natural selection. The five conditions are: random mating, large population, no mutation, no gene flow, no selection."},
+  {sub:"7.2",unit:"7",unitName:"Natural Selection",q:"A beetle population shifts to green as predators eat brown beetles. This is:",opts:["Stabilizing selection","Disruptive selection","Directional selection","Sexual selection"],ans:2,exp:"Directional selection favors one extreme phenotype, shifting the population mean over generations."},
+  {sub:"8.2",unit:"8",unitName:"Ecology",q:"Which process converts atmospheric N₂ into NH₃ usable by plants?",opts:["Denitrification","Nitrogen fixation","Nitrification","Decomposition"],ans:1,exp:"Nitrogen fixation by bacteria like Rhizobium converts N₂ into NH₃/NH₄⁺ — a key Topic 8.2 process."},
+  {sub:"8.3",unit:"8",unitName:"Ecology",q:"A Type III survivorship curve is characteristic of species that:",opts:["Invest heavily in few offspring","Show constant mortality","Produce many offspring with little parental care","Live unusually long lives"],ans:2,exp:"Type III curves show high early mortality — typical of r-selected species (fish, oysters)."},
+  {sub:"3.2",unit:"3",unitName:"Cellular Energetics",q:"Which of the following best describes competitive inhibition of an enzyme?",opts:["A molecule binds the active site, blocking substrate","A molecule binds allosterically, changing enzyme shape","The enzyme is permanently denatured","Substrate concentration has no effect"],ans:0,exp:"Competitive inhibitors bind the active site directly, competing with the substrate. Increasing substrate concentration can overcome it."},
+  {sub:"4.6",unit:"4",unitName:"Cell Communication",q:"Which phase of mitosis involves chromosomes lining up along the cell's equator?",opts:["Prophase","Metaphase","Anaphase","Telophase"],ans:1,exp:"During metaphase, spindle fibers attach to kinetochores and align chromosomes at the metaphase plate."},
+  {sub:"6.2",unit:"6",unitName:"Gene Expression",q:"Which enzyme proofreads and corrects errors during DNA replication?",opts:["Helicase","Primase","DNA polymerase III","Ligase"],ans:2,exp:"DNA polymerase III has 3'→5' exonuclease activity, allowing it to remove and replace mismatched bases."},
+  {sub:"5.1",unit:"5",unitName:"Heredity",q:"Crossing over during meiosis increases genetic diversity by:",opts:["Doubling the number of chromosomes","Exchanging segments between homologous chromosomes","Separating sister chromatids early","Eliminating recessive alleles"],ans:1,exp:"Crossing over (recombination) during prophase I exchanges genetic material between non-sister chromatids of homologous chromosomes, producing new allele combinations."},
+  {sub:"7.9",unit:"7",unitName:"Natural Selection",q:"Which type of speciation occurs when a geographic barrier separates a population?",opts:["Sympatric speciation","Allopatric speciation","Parapatric speciation","Peripatric speciation"],ans:1,exp:"Allopatric speciation occurs when a geographic barrier (river, mountain range) physically isolates populations, allowing them to diverge independently."},
+];
+
+const FRQS = [
+  {sub:"3.5",unit:"3",unitName:"Cellular Energetics",scenario:"A researcher grows two batches of spinach leaves — one in full light and one in complete darkness for 24 hours — then measures ATP production in isolated chloroplasts.",parts:[{label:"(a) Identify which batch will have higher concentrations of ADP and Pᵢ in the stroma, and explain why.",pts:3},{label:"(b) Predict what would happen to the pH gradient across the thylakoid membrane if the electron transport chain were inhibited by a toxin. Justify your prediction.",pts:3},{label:"(c) Describe how the light reactions and the Calvin cycle are interdependent. Include the specific molecules that connect them.",pts:4}],total:10},
+  {sub:"8.2",unit:"8",unitName:"Ecology",scenario:"A temperate forest ecosystem experiences a sudden collapse of the wolf (top predator) population due to overhunting. Scientists monitor the ecosystem over the following decade.",parts:[{label:"(a) Predict the short-term effect on the deer population and explain the mechanism using trophic cascade concepts.",pts:3},{label:"(b) Explain how the change in deer population could affect the nitrogen cycle in forest soil. Reference at least one specific nitrogen cycle process.",pts:3},{label:"(c) When wolves are reintroduced after 10 years, vegetation recovers. Identify whether this is primary or secondary succession and justify your answer.",pts:4}],total:10},
+  {sub:"5.5",unit:"5",unitName:"Heredity",scenario:"In snapdragons, flower color shows incomplete dominance. Red (C^R C^R) × White (C^W C^W) produce all-pink (C^R C^W) F1 offspring.",parts:[{label:"(a) Predict the phenotypic ratio from a cross between two pink snapdragons. Show your reasoning.",pts:3},{label:"(b) A botanist observes a white snapdragon that spontaneously produces one red flower on a single branch. Propose a molecular-level explanation.",pts:3},{label:"(c) Explain why incomplete dominance does NOT violate Mendel's law of segregation.",pts:4}],total:10},
+];
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let selectedSub = 'all';
+let questions=[], current=0, answers=[], currentFRQ=null;
+
+// ── SUBUNIT UI ───────────────────────────────────────────────────────────────
+function buildSubunitUI() {
+  const wrap = document.getElementById('subunitGroups');
+  // "All" pill at top
+  const allPill = document.createElement('div');
+  allPill.innerHTML = '<div class="subunit-pills"><button class="subunit-pill active" data-sub="all" onclick="selectSub(\'all\',this)">🌿 All topics</button></div>';
+  wrap.appendChild(allPill);
+
+  UNIT_TREE.forEach(u=>{
+    const grp = document.createElement('div');
+    grp.className='unit-group';
+    let pills = u.subs.map(s=>`<button class="subunit-pill" data-sub="${s.id}" onclick="selectSub('${s.id}',this)">${s.name}</button>`).join('');
+    grp.innerHTML=`<div class="unit-group-header">${u.name}</div><div class="subunit-pills">${pills}</div>`;
+    wrap.appendChild(grp);
+  });
+}
+
+function selectSub(sub, el) {
+  document.querySelectorAll('.subunit-pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  selectedSub = sub;
+}
+
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+function goHome(){show('home')}
+function shuffle(arr){return [...arr].sort(()=>Math.random()-0.5)}
+
+function getPool(arr, subField='sub') {
+  if(selectedSub==='all') return arr;
+  // match exact subunit or parent unit
+  const pool = arr.filter(x => x[subField]===selectedSub || x.unit===selectedSub);
+  return pool.length ? pool : arr;
+}
+
+// ── MCQ ──────────────────────────────────────────────────────────────────────
+function startMCQ(){
+  questions=shuffle(getPool(QUESTIONS)).slice(0,10);
+  current=0;answers=[];
+  renderQ();show('mcq-screen');
+}
+
+function renderQ(){
+  const q=questions[current],n=questions.length;
+  document.getElementById('mcq-counter').textContent=`Question ${current+1} of ${n}`;
+  document.getElementById('mcq-progress').style.width=`${((current+1)/n)*100}%`;
+  document.getElementById('mcq-chip').textContent=`${q.sub} — ${q.unitName}`;
+  document.getElementById('mcq-q').textContent=q.q;
+  const fb=document.getElementById('mcq-feedback');fb.className='feedback-box';fb.textContent='';
+  document.getElementById('mcq-next').style.display='none';
+  const letters=['A','B','C','D'];
+  const wrap=document.getElementById('mcq-opts');wrap.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const btn=document.createElement('button');
+    btn.className='opt';
+    btn.innerHTML=`<span class="opt-letter">${letters[i]}</span><span>${o}</span>`;
+    btn.onclick=()=>selectOpt(i,btn);
+    wrap.appendChild(btn);
+  });
+}
+
+function selectOpt(i,btn){
+  const q=questions[current];
+  document.querySelectorAll('.opt').forEach(b=>b.onclick=null);
+  const correct=i===q.ans;
+  answers.push({q:q.q,chosen:q.opts[i],correct,correctAns:q.opts[q.ans],exp:q.exp});
+  btn.classList.add(correct?'selected-correct':'selected-wrong');
+  if(!correct)document.querySelectorAll('.opt')[q.ans].classList.add('reveal-correct');
+  const fb=document.getElementById('mcq-feedback');
+  fb.className='feedback-box '+(correct?'correct':'wrong')+' show';
+  fb.textContent=(correct?'✓ Correct! ':'✗ Incorrect. ')+q.exp;
+  const nb=document.getElementById('mcq-next');
+  nb.textContent=current+1<questions.length?'Next →':'See results →';
+  nb.style.display='';
+}
+
+function nextMCQ(){current++;if(current<questions.length)renderQ();else showResults()}
+
+function showResults(){
+  show('results-screen');
+  const correct=answers.filter(a=>a.correct).length;
+  const pct=Math.round((correct/answers.length)*100);
+  document.getElementById('res-pct').textContent=pct+'%';
+  const msgs=[[90,'Excellent work! 🎉'],[70,'Good job! Keep it up.'],[50,'Getting there — review the misses.'],[0,"Keep practicing — you've got this."]];
+  document.getElementById('res-msg').textContent=msgs.find(([t])=>pct>=t)[1];
+  document.getElementById('res-correct').textContent=correct;
+  document.getElementById('res-wrong').textContent=answers.length-correct;
+  const list=document.getElementById('review-list');list.innerHTML='';
+  answers.forEach((a,i)=>{
+    const d=document.createElement('div');
+    d.className='review-item '+(a.correct?'ri-correct':'ri-wrong');
+    d.innerHTML=`<div class="ri-q">${i+1}. ${a.q.length>90?a.q.slice(0,90)+'…':a.q}</div><div class="ri-ans">Your answer: <strong>${a.chosen}</strong>${!a.correct?` — <span class="ri-correct-ans">Correct: ${a.correctAns}</span>`:''}</div>`;
+    list.appendChild(d);
+  });
+}
+
+// ── FRQ ──────────────────────────────────────────────────────────────────────
+function startFRQ(){
+  const pool=getPool(FRQS);
+  currentFRQ=pool[Math.floor(Math.random()*pool.length)];
+  document.getElementById('frq-chip').textContent=`${currentFRQ.sub} — ${currentFRQ.unitName}`;
+  document.getElementById('frq-scenario').textContent=currentFRQ.scenario;
+  const wrap=document.getElementById('frq-parts');wrap.innerHTML='';
+  currentFRQ.parts.forEach((p,i)=>{
+    const div=document.createElement('div');
+    div.innerHTML=`<div class="frq-part-label">${p.label}<span class="pts">${p.pts} pts</span></div><textarea id="fa${i}" placeholder="Write your response here…"></textarea>`;
+    wrap.appendChild(div);
+  });
+  const fb=document.getElementById('frq-feedback');fb.className='feedback-box info';fb.innerHTML='';
+  const btn=document.getElementById('frq-submit');
+  btn.disabled=false;btn.textContent='✦ Grade with AI';btn.onclick=submitFRQ;
+  show('frq-screen');
+}
+
+async function submitFRQ(){
+  const fb=document.getElementById('frq-feedback'),btn=document.getElementById('frq-submit');
+  btn.disabled=true;btn.textContent='Grading…';
+  fb.className='feedback-box info show';fb.textContent='⏳ Sending to AI grader — takes about 10–15 seconds…';
+  const ans=currentFRQ.parts.map((p,i)=>({part:p.label,pts:p.pts,response:document.getElementById('fa'+i).value.trim()||'[No response]'}));
+  const sys=`You are a strict AP Biology FRQ grader. Grade each part based on the official AP rubric. Return ONLY valid JSON with no markdown: {"parts":[{"score":N,"feedback":"1-3 sentence AP reader feedback"}],"total":N,"overall":"one sentence summary"}`;
+  const usr=`FRQ: ${currentFRQ.scenario}\nTotal pts: ${currentFRQ.total}\n\n${ans.map((a,i)=>`Part ${i+1} (${a.pts} pts): ${a.part}\nStudent: ${a.response}`).join('\n\n')}`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,system:sys,messages:[{role:'user',content:usr}]})});
+    const data=await res.json();
+    const raw=data.content.map(c=>c.text||'').join('');
+    const parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    fb.className='feedback-box info show';
+    let html=`<div style="font-size:16px;font-weight:700;margin-bottom:12px;color:var(--green-dark)">Score: ${parsed.total} / ${currentFRQ.total}</div>`;
+    parsed.parts.forEach((p,i)=>{html+=`<div class="frq-result-card"><h4>Part ${String.fromCharCode(65+i)} <span class="frq-pts-num">${p.score}/${currentFRQ.parts[i].pts}</span></h4><p>${p.feedback}</p></div>`;});
+    html+=`<div style="font-size:13px;margin-top:12px;padding:10px;background:var(--green-light);border-radius:8px;color:var(--text2)">${parsed.overall}</div>`;
+    fb.innerHTML=html;
+    btn.textContent='Try another FRQ';btn.disabled=false;btn.onclick=startFRQ;
+  }catch(e){
+    fb.className='feedback-box wrong show';fb.textContent='Could not reach the AI grader. Check your connection and try again.';
+    btn.disabled=false;btn.textContent='✦ Grade with AI';btn.onclick=submitFRQ;
+  }
+}
+
+// Init
+buildSubunitUI();
+</script>
+</body>
+</html>
